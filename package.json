@@ -1,0 +1,49 @@
+{
+  "name": "YouiWeather",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@youi/babel-plugin-react-native-youi": "1.0.4",
+    "@youi/react-native-youi": "6.2.0",
+    "axios": "^0.21.0",
+    "react": "16.8.6",
+    "react-native": "0.60.6",
+    "react-navigation": "^2.18.3",
+    "react-query": "^3.3.0",
+    "react-query-devtools": "^2.6.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.6.2",
+    "@babel/runtime": "^7.6.2",
+    "@types/jest": "^26.0.19",
+    "@types/react": "^17.0.0",
+    "@types/react-native": "^0.63.40",
+    "@types/react-navigation": "^3.4.0",
+    "@types/react-test-renderer": "^17.0.0",
+    "jest": "^24.9.0",
+    "metro-react-native-babel-preset": "0.57.0",
+    "react-test-renderer": "16.8.6",
+    "typescript": "^4.1.3"
+  },
+  "jest": {
+    "preset": "@youi/react-native-youi",
+    "transform": {
+      "^.+\\.js$": "<rootDir>/node_modules/react-native/jest/preprocessor.js"
+    },
+    "transformIgnorePatterns": [
+      "<rootDir>/node_modules/(?!(jest-)?react-native|@youi)"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/appium/"
+    ]
+  },
+  "youi": {
+    "entryFile": "index.youi.js",
+    "defaultBundleMode": "remote"
+  }
+}
