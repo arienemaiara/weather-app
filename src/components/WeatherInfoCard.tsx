@@ -22,7 +22,7 @@ export default function WeatherInfoCard({
     <View style={styles.cardContainer}>
       <Text style={styles.cityName}>{city}</Text>
       <View style={styles.weatherInfo}>
-        <Text>{weatherIcon}</Text>
+        <Text>{weatherIcon}000</Text>
         <Text>{weather}</Text>
       </View>
       <Text>{weatherStatus}</Text>

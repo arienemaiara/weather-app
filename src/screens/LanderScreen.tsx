@@ -1,8 +1,9 @@
 import React from 'react'
-import { View, FlatList, Text, StyleSheet } from 'react-native'
+import { View, FlatList, Text, StyleSheet, NativeModules } from 'react-native'
 import {
   FormFactor
 } from '@youi/react-native-youi'
+import { NavigationScreenProps } from 'react-navigation';
 import { useQuery } from 'react-query'
 
 import WeatherInfoCard, { WeatherInfoCardProps } from '../components/WeatherInfoCard'
@@ -24,7 +25,13 @@ const cities:WeatherInfoCardProps[] = [
   }
 ]
 
-export default function LanderScreen() {
+interface LanderScreen extends NavigationScreenProps {
+  citiesWeather: any[]
+}
+
+export default function LanderScreen({ navigation }: NavigationScreenProps) {
+
+  console.log('citiesWeather.', navigation.getParam('citiesWeather'))
 
   // const { isLoading, error, data, isFetching } = useQuery("repoData", () =>
   //   fetch(

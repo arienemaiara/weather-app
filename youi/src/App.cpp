@@ -1,6 +1,8 @@
 // © You i Labs Inc. 2000-2020. All rights reserved.
 #include "App.h"
 
+// #include "GeoLocationModule.h"
+
 #include <JSBundlingStrings.h>
 #include <automation/YiWebDriverLocator.h>
 #include <cxxreact/JSBigString.h>
@@ -32,6 +34,8 @@ bool App::UserInit()
 #endif
 
     std::unique_ptr<JsBundleLoader> pBundleLoader(GetBundler());
+
+    // GetBridge().AddModule<GeoLocationModule>();
 
     PlatformApp::SetJsBundleLoader(std::move(pBundleLoader));
     return PlatformApp::UserInit();
