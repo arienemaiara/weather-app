@@ -62,8 +62,10 @@ type Sys = {
 export type ForecastDetail = {
   temperature: number
   weatherDescription: string
+  icon: string
   humidity: number
   clouds: string
   wind: number
   dt: number
+  date: string
 }

@@ -31,8 +31,10 @@ class LanderScreen extends Component<LanderScreenProps>  {
     }
   }
 
-  onItemPress = (city: City) => {
-    this.props.navigation.navigate('Forecast', { city })
+  onItemPress = (city: City | undefined) => {
+    if (city) {
+      this.props.navigation.navigate('Forecast', { city })
+    }
   }
 
   render() {
@@ -53,7 +55,7 @@ class LanderScreen extends Component<LanderScreenProps>  {
                 weather={item.main.temp}
                 weatherIcon={item.weather[0]?.icon}
                 description={item.weather[0]?.main}
-                onItemPress={(city) => this.onItemPress(city)}
+                onItemPress={this.onItemPress(city)}
               />
             )
           }}
