@@ -1,20 +1,21 @@
 import { createStackNavigator, createSwitchNavigator } from 'react-navigation'
 
 import LanderScreen from '../screens/LanderScreen'
+import WeatherInfoScreen from '../screens/WeatherInfoScreen';
 import SplashScreen from '../screens/SplashScreen'
 
 const AppStack = createStackNavigator(
   {
-    Home: LanderScreen
+    Home: LanderScreen,
+    Forecast: WeatherInfoScreen
   },
   {
     initialRouteName: 'Home',
-    headerMode: 'none'
   }
 )
 
 const SplashStack = createStackNavigator(
-  { Splash: { screen: SplashScreen} },
+  { Splash: SplashScreen },
   {
     initialRouteName: 'Splash',
   },

@@ -12,6 +12,7 @@
     "@youi/babel-plugin-react-native-youi": "1.0.4",
     "@youi/react-native-youi": "6.2.0",
     "axios": "^0.21.0",
+    "query-string": "^6.13.7",
     "react": "16.8.6",
     "react-native": "0.60.6",
     "react-navigation": "^2.18.3",

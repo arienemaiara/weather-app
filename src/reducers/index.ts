@@ -3,7 +3,7 @@ import { combineReducers } from '@reduxjs/toolkit'
 import weatherReducer, { WeatherState } from '../features/weather/weatherSlicer'
 
 export interface ApplicationState {
-  WeatherState: WeatherState
+  weather: WeatherState
 }
 
 const rootReducer = combineReducers({

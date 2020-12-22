@@ -1,34 +1,52 @@
-import React, { useEffect } from 'react'
+import React, { Component } from 'react'
 import { View, Text } from 'react-native'
-// import { useQueries } from 'react-query'
-import { NavigationScreenProps } from 'react-navigation';
+import { NavigationScreenProps } from 'react-navigation'
+import { connect } from 'react-redux'
 
-import { DEFAULT_CITIES } from '../constants'
-import { fetchCurrentWeather } from '../services/openWeather'
+import { City, CityWeather } from '../types/types'
+import { ApplicationState } from '../reducers'
+import { loadApp, refreshApp, removeCity } from '../features/weather/weatherSlicer'
 
-export default function SplashScreen({ navigation }: NavigationScreenProps) {
+type SplashScreenProps = {
+  citiesList: City[]
+  citiesWeather: CityWeather[]
+  isLoading: boolean
+  error?: string
+  loadApp: () => void
+} & NavigationScreenProps
 
-  // const citiesQueries = useQueries(
-  //   DEFAULT_CITIES.map(city => {
-  //     return {
-  //       queryKey: ['city', city.name],
-  //       queryFn: () => fetchCurrentWeather(city)
-  //     }
-  //   })
-  // )
+class SplashScreen extends Component<SplashScreenProps> {
 
-  // useEffect(() => {
-  //   const isLoading = citiesQueries.filter((query) => query.isLoading === true)
-  //   if (!isLoading.length) {
-  //     navigation.navigate('Home', {
-  //       citiesWeather: citiesQueries.map((item) => item.data)
-  //     })
-  //   }
-  // }, [citiesQueries])
+  componentDidMount() {
+    this.props.loadApp()
+  }
 
-  return (
-    <View style={{backgroundColor: '#458', flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <Text>splash</Text>
-    </View>
-  )
+  componentDidUpdate() {
+    if (!this.props.isLoading) {
+      this.props.navigation.navigate('Home')
+    }
+  }
+
+  render() {
+    return (
+      <View style={{backgroundColor: '#458', flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+        <Text>splash</Text>
+      </View>
+    )
+  }
 }
+
+const mapStateToProps = ({ weather }: ApplicationState) => ({
+  error: weather.error,
+  citiesList: weather.cities,
+  citiesWeather: weather.citiesWeather,
+  isLoading: weather.isLoading,
+})
+
+const mapDispatchToProps = (dispatch: any) => ({
+  // reload: () => dispatch(refreshApp()),
+  loadApp: () => dispatch(loadApp()),
+  // onCityRemoval: (city: City) => dispatch(removeCity(city)),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(SplashScreen)

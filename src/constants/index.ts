@@ -5,11 +5,6 @@ export const OPEN_WEATHER_CURRENT_CONDITIONS_ENDPOINT = 'weather'
 
 export const OPEN_WEATHER_5DAY_FORECAST_ENDPOINT = 'forecast'
 
-export const DEFAULT_CITIES: City[] = [
-  { id: 1, name: 'Toronto', lat: null, lon: null },
-  { id: 2, name: 'Ottawa', lat: null, lon: null },
-]
-
 export const ASYNC_STORAGE_KEYS = {
   CITY_LIST: 'CITY_LIST',
   GEO_LOCATION: 'GEO_LOCATION',
@@ -81,6 +76,11 @@ export const MASTER_CITY_LIST = [
   { id: 63, name: 'Perth', lat: null, lon: null },
   { id: 64, name: 'Sydney', lat: null, lon: null },
   { id: 65, name: 'Wellington', lat: null, lon: null },
+]
+
+export const DEFAULT_CITIES: City[] = [
+  { id: 1, name: 'Los Angeles', lat: null, lon: null },
+  { id: 2, name: 'Ottawa', lat: null, lon: null },
 ]
 
 export const FETCHING_THROTTLE_MS = 5000

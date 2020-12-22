@@ -1,68 +1,68 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { View, FlatList, Text, StyleSheet, NativeModules } from 'react-native'
 import {
   FormFactor
 } from '@youi/react-native-youi'
 import { NavigationScreenProps } from 'react-navigation';
-import { useQuery } from 'react-query'
+import { connect } from 'react-redux'
 
 import WeatherInfoCard, { WeatherInfoCardProps } from '../components/WeatherInfoCard'
+import { City, CityWeather } from '../types/types'
+import { ApplicationState } from '../reducers'
 
-const cities:WeatherInfoCardProps[] = [
-  {
-    id: 1,
-    city: 'Ottawa',
-    weather: '24°c',
-    weatherStatus: 'sunny',
-    weatherIcon: 'icon'
-  },
-  {
-    id: 2,
-    city: 'Toronto',
-    weather: '20°c',
-    weatherStatus: 'sunny',
-    weatherIcon: 'icon'
+import { refreshApp, removeCity, addCity } from '../features/weather/weatherSlicer'
+
+type LanderScreenProps = {
+  citiesList: City[]
+  citiesWeather: CityWeather[]
+  lastRefreshed: number
+  error?: string
+  isLoading: boolean
+  onCityRemoval: (city: City) => void
+  onAddCity: (city: City) => void
+  reload: () => void
+} & NavigationScreenProps
+
+class LanderScreen extends Component<LanderScreenProps>  {
+
+  static navigationOptions = () => {
+    return {
+      headerTitle: () =>  <Text>Youi Weather App</Text>
+    }
   }
-]
 
-interface LanderScreen extends NavigationScreenProps {
-  citiesWeather: any[]
-}
+  onItemPress = (city: City) => {
+    this.props.navigation.navigate('Forecast', { city })
+  }
 
-export default function LanderScreen({ navigation }: NavigationScreenProps) {
+  render() {
+    console.log(this.props)
+    const { citiesWeather, citiesList, lastRefreshed, onCityRemoval, onAddCity, reload } = this.props
 
-  console.log('citiesWeather.', navigation.getParam('citiesWeather'))
-
-  // const { isLoading, error, data, isFetching } = useQuery("repoData", () =>
-  //   fetch(
-  //     "https://api.github.com/repos/tannerlinsley/react-query"
-  //   ).then((res) => res.json())
-  // );
-
-  // if (isLoading) {
-  //   return <Text>Loading...</Text>
-  // };
-
-  return (
-    <View style={styles.mainContainer}>
-      <FlatList
-        data={cities} 
-        horizontal={FormFactor.isTV ? true : false}
-        renderItem={({ item }) => {
-          return (
-            <WeatherInfoCard 
-              id={item.id}
-              city={item.city}
-              weather={item.weather}
-              weatherIcon={item.weatherIcon}
-              weatherStatus={item.weatherStatus}
-            />
-          )
-        }}
-        keyExtractor={item => item.id!.toString()}
-      />
-    </View>
-  )
+    return (
+      <View style={styles.mainContainer}>
+        <FlatList
+          data={citiesWeather} 
+          horizontal={FormFactor.isTV ? true : false}
+          renderItem={({ item }) => {
+            const city = citiesList.find((city) => city.name === item.name)
+            return (
+              <WeatherInfoCard 
+                id={item.id}
+                city={item.name}
+                weather={item.main.temp}
+                weatherIcon={item.weather[0]?.icon}
+                description={item.weather[0]?.main}
+                onItemPress={(city) => this.onItemPress(city)}
+              />
+            )
+          }}
+          keyExtractor={item => item.id!.toString()}
+          style={styles.weatherList}
+        />
+      </View>
+    )
+  }
 }
 
 const styles = FormFactor.select({
@@ -70,7 +70,27 @@ const styles = FormFactor.select({
     mainContainer: {
       flex: 1,
       justifyContent: 'center',
+      alignItems: 'center',
       backgroundColor: '#fcfefe'
+    },
+    weatherList: {
+      alignSelf: 'center',
+      maxHeight: '50%'
     }
   })
 })
+
+const mapStateToProps = ({ weather }: ApplicationState) => ({
+  error: weather.error,
+  citiesList: weather.cities,
+  citiesWeather: weather.citiesWeather,
+  isLoading: weather.isLoading,
+})
+
+const mapDispatchToProps = (dispatch: any) => ({
+  reload: () => dispatch(refreshApp()),
+  onCityRemoval: (city: City) => dispatch(removeCity(city)),
+  onAddCity: (city: City) => dispatch(addCity(city))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(LanderScreen)
