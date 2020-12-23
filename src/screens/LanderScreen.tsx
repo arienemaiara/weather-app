@@ -1,16 +1,21 @@
 import React, { Component } from 'react'
 import { View, FlatList, Text, StyleSheet, NativeModules } from 'react-native'
-import {
-  FormFactor
-} from '@youi/react-native-youi'
-import { NavigationScreenProps } from 'react-navigation';
+import { FormFactor } from '@youi/react-native-youi'
+import { NavigationScreenProps } from 'react-navigation'
 import { connect } from 'react-redux'
 
-import WeatherInfoCard, { WeatherInfoCardProps } from '../components/WeatherInfoCard'
+import WeatherInfoCard from '../components/WeatherInfoCard'
+import HeaderButton from '../components/header/HeaderButton'
+import RefreshButton from '../components/RefreshButton'
+
 import { City, CityWeather } from '../types/types'
 import { ApplicationState } from '../reducers'
 
-import { refreshApp, removeCity, addCity } from '../features/weather/weatherSlicer'
+import {
+  refreshApp,
+  removeCity,
+  addCity
+} from '../features/weather/weatherSlicer'
 
 type LanderScreenProps = {
   citiesList: City[]
@@ -23,11 +28,16 @@ type LanderScreenProps = {
   reload: () => void
 } & NavigationScreenProps
 
-class LanderScreen extends Component<LanderScreenProps>  {
-
+class LanderScreen extends Component<LanderScreenProps> {
   static navigationOptions = () => {
     return {
-      headerTitle: () =>  <Text>Youi Weather App</Text>
+      headerRight: (
+        <View style={styles.headerButtonContainer}>
+          <HeaderButton title="Add city" icon="add" onPress={() => {}} />
+          <RefreshButton />
+          <HeaderButton title="About" icon="info" onPress={() => {}} />
+        </View>
+      )
     }
   }
 
@@ -38,28 +48,34 @@ class LanderScreen extends Component<LanderScreenProps>  {
   }
 
   render() {
-    console.log(this.props)
-    const { citiesWeather, citiesList, lastRefreshed, onCityRemoval, onAddCity, reload } = this.props
+    const {
+      citiesWeather,
+      citiesList,
+      lastRefreshed,
+      onCityRemoval,
+      onAddCity,
+      reload
+    } = this.props
 
     return (
       <View style={styles.mainContainer}>
         <FlatList
-          data={citiesWeather} 
+          data={citiesWeather}
           horizontal={FormFactor.isTV ? true : false}
           renderItem={({ item }) => {
             const city = citiesList.find((city) => city.name === item.name)
             return (
-              <WeatherInfoCard 
+              <WeatherInfoCard
                 id={item.id}
                 city={item.name}
                 weather={item.main.temp}
                 weatherIcon={item.weather[0]?.icon}
                 description={item.weather[0]?.main}
-                onItemPress={this.onItemPress(city)}
+                onItemPress={() => this.onItemPress(city)}
               />
             )
           }}
-          keyExtractor={item => item.id!.toString()}
+          keyExtractor={(item) => item.id!.toString()}
           style={styles.weatherList}
         />
       </View>
@@ -76,8 +92,12 @@ const styles = FormFactor.select({
       backgroundColor: '#fcfefe'
     },
     weatherList: {
-      alignSelf: 'center',
-      maxHeight: '50%'
+      alignSelf: 'center'
+    },
+    headerButtonContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      height: '100%'
     }
   })
 })
@@ -86,7 +106,7 @@ const mapStateToProps = ({ weather }: ApplicationState) => ({
   error: weather.error,
   citiesList: weather.cities,
   citiesWeather: weather.citiesWeather,
-  isLoading: weather.isLoading,
+  isLoading: weather.isLoading
 })
 
 const mapDispatchToProps = (dispatch: any) => ({

@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.12.1",
+    "@react-native-community/netinfo": "^5.9.9",
     "@reduxjs/toolkit": "^1.5.0",
     "@youi/babel-plugin-react-native-youi": "1.0.4",
     "@youi/react-native-youi": "6.2.0",
@@ -15,6 +16,7 @@
     "query-string": "^6.13.7",
     "react": "16.8.6",
     "react-native": "0.60.6",
+    "react-native-modal": "^11.6.1",
     "react-navigation": "^2.18.3",
     "react-query": "^3.3.0",
     "react-query-devtools": "^2.6.3",

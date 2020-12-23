@@ -60,6 +60,7 @@ type Sys = {
 }
 
 export type ForecastDetail = {
+  id: string
   temperature: number
   weatherDescription: string
   icon: string
@@ -68,4 +69,5 @@ export type ForecastDetail = {
   wind: number
   dt: number
   date: string
+  hour: string
 }

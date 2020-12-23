@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { View, ScrollView, FlatList, Text, StyleSheet, SectionList } from 'react-native'
-import { NavigationScreenProps } from 'react-navigation';
+import { ScrollView, Text, StyleSheet } from 'react-native'
+import { NavigationScreenProps } from 'react-navigation'
 import { FormFactor } from '@youi/react-native-youi'
 
 import ForecastInterval from '../components/ForecastInterval'
@@ -24,69 +24,80 @@ export type GroupedForecastType = {
   data: ForecastDetail[]
 }
 
-export default class WeatherInfoScreen extends Component<WeatherInfoProps, WeatherInfoState> {
-
+export default class WeatherInfoScreen extends Component<
+  WeatherInfoProps,
+  WeatherInfoState
+> {
   state = {
     weatherForecast: [],
     groupedForecast: [],
-    loading: true,
+    loading: true
   }
 
   componentDidMount() {
-    this.fetchForecast()    
+    this.fetchForecast()
   }
 
   fetchForecast = () => {
     const city = this.props.navigation.getParam('city')
     fetchWeatherForecast(city)
-      .then(responseJson => {
+      .then((responseJson) => {
         const forecastDetails = this.mapForecastDetail(responseJson.list)
         const groupedForecast = this.groupForecastDetailByDate(forecastDetails)
         this.setState({
           weatherForecast: forecastDetails,
           groupedForecast: groupedForecast,
-          loading: false,
+          loading: false
         })
       })
-      .catch(error => {
+      .catch((error) => {
         this.props.notifyError(error.message)
-        this.setState({ 
-          loading: false,
+        this.setState({
+          loading: false
         })
       })
   }
 
-  mapForecastDetail = (details: any): ForecastDetail[] => (
+  mapForecastDetail = (details: any): ForecastDetail[] =>
     details.map((detail: any) => ({
       id: detail.dt_txt,
       dt: detail.dt,
       date: detail.dt_txt.split(' ')[0],
+      hour: detail.dt_txt.split(' ')[1],
       temperature: detail.main.temp,
       clouds: detail.clouds.all,
       weatherDescription: detail.weather[0].description,
       icon: detail.weather[0].icon,
       humidity: detail.main.humidity,
-      wind: detail.wind.speed,
+      wind: detail.wind.speed
     }))
-  )
 
-  groupForecastDetailByDate = (weatherForecast: ForecastDetail[]): GroupedForecastType[] => {
+  groupForecastDetailByDate = (
+    weatherForecast: ForecastDetail[]
+  ): GroupedForecastType[] => {
     const groupedData = groupBy(weatherForecast, 'date')
-    const groupedForecast:GroupedForecastType[] = Object.keys(groupedData).map((key) => {
-      return {
-        forecastDay: key,
-        data: groupedData[key]
+    const groupedForecast: GroupedForecastType[] = Object.keys(groupedData).map(
+      (key) => {
+        return {
+          forecastDay: key,
+          data: groupedData[key]
+        }
       }
-    })
+    )
     return groupedForecast
   }
-      
+
   render() {
-    const { loading, groupedForecast }  = this.state
+    const { loading, groupedForecast } = this.state
+    const city = this.props.navigation.getParam('city')
     return (
       !loading && (
-        <ScrollView style={{ flex: 1 }}>
-          {groupedForecast.map((forecast) => <ForecastInterval forecast={forecast} />)}
+        <ScrollView style={styles.container}>
+          <Text style={styles.cityName}>{city.name}</Text>
+          {groupedForecast.map((forecast) => {
+            const { forecastDay } = forecast
+            return <ForecastInterval forecast={forecast} key={forecastDay} />
+          })}
         </ScrollView>
       )
     )
@@ -94,16 +105,12 @@ export default class WeatherInfoScreen extends Component<WeatherInfoProps, Weath
 }
 
 const styles = StyleSheet.create({
-  item: {
-    backgroundColor: "#f9c2ff",
-    padding: 20,
-    marginVertical: 8
+  container: {
+    flex: 1
   },
-  header: {
-    fontSize: 32,
-    backgroundColor: "#fff"
-  },
-  title: {
-    fontSize: 24
+  cityName: {
+    fontSize: 20,
+    color: '#2e2e2e',
+    marginHorizontal: 10
   }
-});
+})

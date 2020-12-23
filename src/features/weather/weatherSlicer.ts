@@ -3,7 +3,7 @@ import { Alert, AsyncStorage } from 'react-native'
 
 import { City, CityWeather } from '../../types/types'
 import { DEFAULT_CITIES, ASYNC_STORAGE_KEYS } from '../../constants'
-import { ApplicationState } from '../../reducers';
+import { ApplicationState } from '../../reducers'
 import { fetchCurrentWeather } from '../../services/openWeather'
 
 export interface Location {
@@ -28,7 +28,7 @@ const initialState: WeatherState = {
   cities: DEFAULT_CITIES,
   citiesWeather: [],
   isLoading: false,
-  lastRefreshed: new Date().getTime(),
+  lastRefreshed: new Date().getTime()
 }
 
 const weatherSlice = createSlice({
@@ -52,14 +52,23 @@ const weatherSlice = createSlice({
     },
     updateRefresh(state) {
       state.lastRefreshed = new Date().getTime()
-    },
-  },
+    }
+  }
 })
 
-export const { loading, loadLocation, loadCities, loadCitiesWeather, updateRefresh } = weatherSlice.actions
+export const {
+  loading,
+  loadLocation,
+  loadCities,
+  loadCitiesWeather,
+  updateRefresh
+} = weatherSlice.actions
 
 const getMaxCityId = (cities: City[]): number => {
-  return cities.reduce((max: number, c: City) => (c.id > max ? c.id : max), cities[0].id)
+  return cities.reduce(
+    (max: number, c: City) => (c.id > max ? c.id : max),
+    cities[0].id
+  )
 }
 
 function storeCitiesAndLocation(cities: City[], position: Location) {
@@ -67,7 +76,7 @@ function storeCitiesAndLocation(cities: City[], position: Location) {
   if (position) {
     store.push([ASYNC_STORAGE_KEYS.GEO_LOCATION, JSON.stringify(position)])
   }
-  return AsyncStorage.multiSet(store, error => {
+  return AsyncStorage.multiSet(store, (error) => {
     if (error !== null) console.log('error saving', error)
   })
 }
@@ -108,14 +117,25 @@ const findLocation = async (dispatch: any, cities: City[]) => {
 }
 */
 
-export const refreshApp = () => async (dispatch: any, getState: () => ApplicationState) => {
+export const refreshApp = () => async (
+  dispatch: any,
+  getState: () => ApplicationState
+) => {
+  console.log('refreshApp')
+  dispatch(loadApp())
   dispatch(updateRefresh())
   // await findLocation(dispatch, getState().WeatherState.cities)
 }
 
-export const loadApp = () => async (dispatch: any, getState: () => ApplicationState) => {
+export const loadApp = () => async (
+  dispatch: any,
+  getState: () => ApplicationState
+) => {
   dispatch(loading(true))
-  const stores = await AsyncStorage.multiGet([ASYNC_STORAGE_KEYS.CITY_LIST, ASYNC_STORAGE_KEYS.GEO_LOCATION])
+  const stores = await AsyncStorage.multiGet([
+    ASYNC_STORAGE_KEYS.CITY_LIST,
+    ASYNC_STORAGE_KEYS.GEO_LOCATION
+  ])
   const cities = stores![0][1]
   const location = stores![1][1]
   if (cities !== null && cities !== undefined) {
@@ -123,12 +143,11 @@ export const loadApp = () => async (dispatch: any, getState: () => ApplicationSt
   }
   if (location !== null && location !== undefined) {
     dispatch(loadLocation(JSON.parse(location)))
-  } 
+  }
   const { weather } = getState()
   const citiesWeather = await getCitiesWeather(weather.cities)
 
   dispatch(loadCitiesWeather(citiesWeather))
-
 
   // else {
   //   await findLocation(dispatch, WeatherState.cities)
@@ -142,15 +161,20 @@ const getCitiesWeather = async (cities: City[]) => {
 
 export const removeCity = (cityToBeRemoved: City) => async (
   dispatch: any,
-  getState: () => ApplicationState,
+  getState: () => ApplicationState
 ): Promise<void> => {
   const { cities, geoLocation } = getState().weather
-  const newCities = cities.filter((city: City) => city.id !== cityToBeRemoved.id)
+  const newCities = cities.filter(
+    (city: City) => city.id !== cityToBeRemoved.id
+  )
   dispatch(loadCities(newCities))
   await storeCitiesAndLocation(newCities, geoLocation!)
 }
 
-export const addCity = (city: City) => async (dispatch: any, getState: () => ApplicationState): Promise<void> => {
+export const addCity = (city: City) => async (
+  dispatch: any,
+  getState: () => ApplicationState
+): Promise<void> => {
   const { cities, geoLocation } = getState().weather
   const newCities = [...cities, { ...city, id: getMaxCityId(cities) + 1 }]
   dispatch(loadCities(newCities))

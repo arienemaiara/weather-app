@@ -1,16 +1,13 @@
 import React from 'react'
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
-import {
-  FormFactor
-} from '@youi/react-native-youi'
+import { FormFactor } from '@youi/react-native-youi'
 
 import { City } from '../types/types'
 
 import WeatherIcon from './WeatherIcon'
 
-
 export type WeatherInfoCardProps = {
-  id: number,
+  id: number
   city: string
   weather: number
   weatherIcon: string
@@ -18,10 +15,10 @@ export type WeatherInfoCardProps = {
   onItemPress: (city: City) => void
 }
 
-export default function WeatherInfoCard({ 
-  city, 
-  weather, 
-  weatherIcon, 
+export default function WeatherInfoCard({
+  city,
+  weather,
+  weatherIcon,
   description,
   onItemPress
 }: WeatherInfoCardProps) {
@@ -31,7 +28,7 @@ export default function WeatherInfoCard({
         <Text style={styles.cityName}>{city}</Text>
         <View style={styles.weatherInfo}>
           <WeatherIcon iconCode={weatherIcon} />
-          <Text>{weather}°C</Text>
+          <Text style={styles.weather}>{weather}°C</Text>
         </View>
         <Text style={styles.weatherDescription}>{description}</Text>
       </View>
@@ -42,10 +39,8 @@ export default function WeatherInfoCard({
 const styles = FormFactor.select({
   TV: StyleSheet.create({
     cardContainer: {
-      flex: 1,
       alignItems: 'center',
       justifyContent: 'space-between',
-      height: '100%',
       width: 150,
       padding: 10,
       marginVertical: 10,
@@ -56,16 +51,22 @@ const styles = FormFactor.select({
       borderRadius: 5
     },
     cityName: {
-      color: '#020307',
-      fontSize: 20
+      color: '#070602',
+      fontSize: 16,
+      marginBottom: 5
     },
     weatherInfo: {
       flexDirection: 'column',
-      alignItems: 'center',
+      alignItems: 'center'
+    },
+    weather: {
+      color: '#2e2e2e',
+      fontSize: 15,
+      marginVertical: 10
     },
     weatherDescription: {
-      color: '#020307',
-      fontSize: 15
+      color: '#2e2e2e',
+      fontSize: 12
     }
   })
 })

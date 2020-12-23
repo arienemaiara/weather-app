@@ -1,11 +1,15 @@
 import React, { Component } from 'react'
-import { View, Text } from 'react-native'
+import { View, Image } from 'react-native'
 import { NavigationScreenProps } from 'react-navigation'
 import { connect } from 'react-redux'
 
 import { City, CityWeather } from '../types/types'
 import { ApplicationState } from '../reducers'
-import { loadApp, refreshApp, removeCity } from '../features/weather/weatherSlicer'
+import {
+  loadApp,
+  refreshApp,
+  removeCity
+} from '../features/weather/weatherSlicer'
 
 type SplashScreenProps = {
   citiesList: City[]
@@ -16,7 +20,6 @@ type SplashScreenProps = {
 } & NavigationScreenProps
 
 class SplashScreen extends Component<SplashScreenProps> {
-
   componentDidMount() {
     this.props.loadApp()
   }
@@ -29,8 +32,11 @@ class SplashScreen extends Component<SplashScreenProps> {
 
   render() {
     return (
-      <View style={{backgroundColor: '#458', flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-        <Text>splash</Text>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Image
+          style={{ width: 300, height: 300 }}
+          source={{ uri: 'res://drawable/weather/sun.png' }}
+        />
       </View>
     )
   }
@@ -40,13 +46,11 @@ const mapStateToProps = ({ weather }: ApplicationState) => ({
   error: weather.error,
   citiesList: weather.cities,
   citiesWeather: weather.citiesWeather,
-  isLoading: weather.isLoading,
+  isLoading: weather.isLoading
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
-  // reload: () => dispatch(refreshApp()),
-  loadApp: () => dispatch(loadApp()),
-  // onCityRemoval: (city: City) => dispatch(removeCity(city)),
+  loadApp: () => dispatch(loadApp())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SplashScreen)
