@@ -5,8 +5,11 @@ import { NavigationScreenProps } from 'react-navigation'
 import { connect } from 'react-redux'
 
 import WeatherInfoCard from '../components/WeatherInfoCard'
+import ButtonContainer from '../components/header/ButtonContainer'
 import HeaderButton from '../components/header/HeaderButton'
 import RefreshButton from '../components/RefreshButton'
+import AboutButton from '../components/AboutButton'
+import AddCityButton from '../components/AddCityButton'
 
 import { City, CityWeather } from '../types/types'
 import { ApplicationState } from '../reducers'
@@ -29,16 +32,28 @@ type LanderScreenProps = {
 } & NavigationScreenProps
 
 class LanderScreen extends Component<LanderScreenProps> {
-  static navigationOptions = () => {
-    return {
-      headerRight: (
-        <View style={styles.headerButtonContainer}>
-          <HeaderButton title="Add city" icon="add" onPress={() => {}} />
-          <RefreshButton />
-          <HeaderButton title="About" icon="info" onPress={() => {}} />
-        </View>
-      )
+  static navigationOptions = ({ navigation }: NavigationScreenProps) => {
+    const { state } = navigation
+
+    if (state.params) {
+      const { isLoading, reload } = state.params
+      return {
+        headerRight: (
+          <ButtonContainer>
+            <AddCityButton />
+            <RefreshButton onPress={reload} disabled={isLoading} />
+            <AboutButton />
+          </ButtonContainer>
+        )
+      }
     }
+  }
+
+  componentDidMount() {
+    this.props.navigation.setParams({
+      reload: this.props.reload,
+      isLoading: this.props.isLoading
+    })
   }
 
   onItemPress = (city: City | undefined) => {
@@ -53,8 +68,7 @@ class LanderScreen extends Component<LanderScreenProps> {
       citiesList,
       lastRefreshed,
       onCityRemoval,
-      onAddCity,
-      reload
+      onAddCity
     } = this.props
 
     return (
@@ -93,11 +107,6 @@ const styles = FormFactor.select({
     },
     weatherList: {
       alignSelf: 'center'
-    },
-    headerButtonContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      height: '100%'
     }
   })
 })

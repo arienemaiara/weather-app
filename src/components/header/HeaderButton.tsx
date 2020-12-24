@@ -1,5 +1,10 @@
 import React, { PureComponent } from 'react'
-import { TouchableOpacity, Text, StyleSheet } from 'react-native'
+import {
+  TouchableOpacity,
+  StyleSheet,
+  StyleProp,
+  TextStyle
+} from 'react-native'
 
 import FontIcon, { IconsType } from '../FontIcon'
 
@@ -8,6 +13,7 @@ type HeaderButtonProps = {
   icon: IconsType
   onPress: () => void
   disabled?: boolean
+  iconStyle?: StyleProp<TextStyle>
 }
 
 export default class HeaderButton extends PureComponent<HeaderButtonProps> {
@@ -19,7 +25,7 @@ export default class HeaderButton extends PureComponent<HeaderButtonProps> {
         style={styles.buttonContainer}
         disabled={this.props.disabled ? true : false}
       >
-        <FontIcon icon={this.props.icon} />
+        <FontIcon icon={this.props.icon} style={this.props.iconStyle} />
       </TouchableOpacity>
     )
   }
