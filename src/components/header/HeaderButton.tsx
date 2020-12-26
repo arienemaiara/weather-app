@@ -18,12 +18,16 @@ type HeaderButtonProps = {
 
 export default class HeaderButton extends PureComponent<HeaderButtonProps> {
   render() {
+    const { disabled } = this.props
     return (
       <TouchableOpacity
         accessibilityLabel={this.props.title}
         onPress={this.props.onPress}
-        style={styles.buttonContainer}
-        disabled={this.props.disabled ? true : false}
+        style={[
+          styles.buttonContainer,
+          disabled ? styles.buttonDisabled : null
+        ]}
+        disabled={disabled ? true : false}
       >
         <FontIcon icon={this.props.icon} style={this.props.iconStyle} />
       </TouchableOpacity>
@@ -42,5 +46,8 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15
+  },
+  buttonDisabled: {
+    opacity: 0.5
   }
 })
