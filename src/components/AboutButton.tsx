@@ -1,10 +1,19 @@
 import React, { PureComponent } from 'react'
-import { FormFactor } from '@youi/react-native-youi'
 
 import HeaderButton from './header/HeaderButton'
 
-export default class AboutButton extends PureComponent {
+type AboutButtonProps = {
+  onButtonPress: () => void
+}
+
+export default class AboutButton extends PureComponent<AboutButtonProps> {
   render() {
-    return <HeaderButton title="About" icon="info" onPress={() => {}} />
+    return (
+      <HeaderButton
+        title="About"
+        icon="info"
+        onPress={this.props.onButtonPress}
+      />
+    )
   }
 }
