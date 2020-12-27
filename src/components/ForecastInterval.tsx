@@ -13,7 +13,7 @@ type ForecastIntervalProps = {
 export default function ForecastInterval({ forecast }: ForecastIntervalProps) {
   return (
     <View style={styles.rowContainer}>
-      <Text style={styles.title}>{forecast.forecastDay}</Text>
+      <Text style={styles.title}>{forecast.forecastDayTitle}</Text>
       <FlatList
         data={forecast.data}
         horizontal={FormFactor.isTV ? true : false}

@@ -11,6 +11,7 @@ import AboutModal from '../components/AboutModal'
 
 import { City, ForecastDetail } from '../types/types'
 import { groupBy } from '../utils/arrays'
+import { formatDateToCalendar } from '../utils/formatters'
 import { fetchWeatherForecast } from '../services/openWeather'
 
 type WeatherInfoProps = {
@@ -33,6 +34,7 @@ type WeatherInfoState = {
 
 export type GroupedForecastType = {
   forecastDay: string
+  forecastDayTitle: string
   data: ForecastDetail[]
 }
 
@@ -127,10 +129,12 @@ export default class WeatherInfoScreen extends Component<
       (key) => {
         return {
           forecastDay: key,
+          forecastDayTitle: formatDateToCalendar(key),
           data: groupedData[key]
         }
       }
     )
+    console.log('groupedForecast', groupedForecast)
     return groupedForecast
   }
 
