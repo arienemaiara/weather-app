@@ -4,9 +4,14 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet
+  StyleSheet,
+  BackHandler
 } from 'react-native'
-import { NavigationScreenProps } from 'react-navigation'
+import {
+  NavigationScreenProps,
+  NavigationEventSubscription
+} from 'react-navigation'
+import { FocusManager } from '@youi/react-native-youi'
 import { connect } from 'react-redux'
 
 import { addCity } from '../features/weather/weatherSlicer'
@@ -22,12 +27,36 @@ type AddLocationState = {
 }
 
 class AddLocationScreen extends Component<AddLocationProps, AddLocationState> {
+  focusListener!: NavigationEventSubscription
+  blurListener!: NavigationEventSubscription
+
+  locationTextInput = React.createRef<TextInput>()
+
   state = {
     cityName: ''
   }
 
+  componentDidMount() {
+    this.focusListener = this.props.navigation.addListener('didFocus', () => {
+      BackHandler.addEventListener('hardwareBackPress', this.goBack)
+    })
+    this.blurListener = this.props.navigation.addListener('didBlur', () =>
+      BackHandler.removeEventListener('hardwareBackPress', this.goBack)
+    )
+
+    if (this.locationTextInput.current)
+      FocusManager.focus(this.locationTextInput.current)
+  }
+
+  componentWillUnmount() {
+    this.focusListener.remove()
+    this.blurListener.remove()
+    BackHandler.removeEventListener('hardwareBackPress', this.goBack)
+  }
+
   goBack = () => {
     this.props.navigation.goBack()
+    return true
   }
 
   onSubmit = () => {
@@ -53,6 +82,7 @@ class AddLocationScreen extends Component<AddLocationProps, AddLocationState> {
           placeholder="City"
           value={cityName}
           onChangeText={(cityName) => this.setState({ cityName })}
+          ref={this.locationTextInput}
         />
 
         <TouchableOpacity

@@ -1,10 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { Alert, AsyncStorage } from 'react-native'
+import { AsyncStorage, NativeModules } from 'react-native'
 
 import { City, CityWeather } from '../../types/types'
 import { DEFAULT_CITIES, ASYNC_STORAGE_KEYS } from '../../constants'
 import { ApplicationState } from '../../reducers'
 import { fetchCurrentWeather } from '../../services/openWeather'
+
+const { GeoLocation } = NativeModules
 
 export interface Location {
   coords: {
@@ -81,41 +83,41 @@ function storeCitiesAndLocation(cities: City[], position: Location) {
   })
 }
 
-/*
-TODO - GET GEOLOCATION FROM NATIVE MODULES
 const findLocation = async (dispatch: any, cities: City[]) => {
+  console.log('findLocation')
   try {
     dispatch(loading(true))
-    navigator.geolocation.getCurrentPosition(
-      async ({ coords }) => {
-        const geoLocation = { coords: { lat: coords.latitude, lon: coords.longitude, ...coords } }
+    GeoLocation.get()
+      .then((location) => console.log('location', location))
+      .catch((error) => console.log(error.message))
+    // navigator.geolocation.getCurrentPosition(
+    //   async ({ coords }) => {
+    //     const geoLocation = { coords: { lat: coords.latitude, lon: coords.longitude, ...coords } }
 
-        const firstCity = cities[0]
-        if (geoLocation.coords.lat !== firstCity.lat && geoLocation.coords.lon !== firstCity.lon) {
-          let currentCity = {
-            id: getMaxCityId(cities) + 1,
-            name: '',
-            lat: geoLocation.coords.lat,
-            lon: geoLocation.coords.lon
-          }
-          dispatch(loadCities([currentCity, ...cities]))
-        }
-        dispatch(loadLocation(geoLocation))
-        await storeCitiesAndLocation(cities, geoLocation!)
-        dispatch(loading(false))
-      },
-      (error: any) => {
-        console.log(error)
-        Alert.alert(error.message)
-        dispatch(loading(false))
-      },
-      { enableHighAccuracy: false, timeout: 20000, maximumAge: 60000 },
-    )
+    //     const firstCity = cities[0]
+    //     if (geoLocation.coords.lat !== firstCity.lat && geoLocation.coords.lon !== firstCity.lon) {
+    //       let currentCity = {
+    //         id: getMaxCityId(cities) + 1,
+    //         name: '',
+    //         lat: geoLocation.coords.lat,
+    //         lon: geoLocation.coords.lon
+    //       }
+    //       dispatch(loadCities([currentCity, ...cities]))
+    //     }
+    //     dispatch(loadLocation(geoLocation))
+    //     await storeCitiesAndLocation(cities, geoLocation!)
+    //     dispatch(loading(false))
+    //   },
+    //   (error: any) => {
+    //     console.log(error)
+    //     dispatch(loading(false))
+    //   },
+    //   { enableHighAccuracy: false, timeout: 20000, maximumAge: 60000 },
+    // )
   } catch (error) {
     console.log(error)
   }
 }
-*/
 
 export const refreshApp = () => async (
   dispatch: any,
@@ -149,7 +151,7 @@ export const loadApp = () => async (
   dispatch(loadCitiesWeather(citiesWeather))
 
   // else {
-  //   await findLocation(dispatch, WeatherState.cities)
+  await findLocation(dispatch, weather.cities)
   // }
   dispatch(loading(false))
 }

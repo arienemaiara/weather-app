@@ -7,6 +7,7 @@
 #include <automation/YiWebDriverLocator.h>
 #include <cxxreact/JSBigString.h>
 #include <glog/logging.h>
+#include "GeoLocationModule.h"
 
 App::App() = default;
 
@@ -35,10 +36,11 @@ bool App::UserInit()
 
     std::unique_ptr<JsBundleLoader> pBundleLoader(GetBundler());
 
-    // GetBridge().AddModule<GeoLocationModule>();
-
     PlatformApp::SetJsBundleLoader(std::move(pBundleLoader));
-    return PlatformApp::UserInit();
+    auto init = PlatformApp::UserInit();
+
+    GetReactNativeViewController().AddModule<GeoLocationModule>();
+    return init;
 }
 
 bool App::UserStart()

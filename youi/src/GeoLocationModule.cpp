@@ -21,6 +21,14 @@ YI_RN_DEFINE_EXPORT_METHOD(GeoLocationModule, get)(Callback successCallback, Cal
     
     errorInfo["message"] = ToDynamic( "Location Services currently not enabled." );
     
+    folly::dynamic locationInfo = folly::dynamic::object;
+
+//    code to give a default location to return if not on ios or android
+//    locationInfo["lat"] = ToDynamic(45);
+//    locationInfo["long"] = ToDynamic(75);
+//    locationInfo["alt"] = ToDynamic(70);
+//    successCallback({ToDynamic(locationInfo)});
+
     failedCallback({ ToDynamic(errorInfo) });
 }
 #endif
