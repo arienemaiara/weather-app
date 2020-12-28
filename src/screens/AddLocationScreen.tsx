@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     marginHorizontal: 20,
     borderColor: '#aaa',
-    borderWidth: 1,
+    borderWidth: 2,
     borderRadius: 3,
     fontSize: 18
   },
@@ -105,20 +105,21 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 30,
-    height: 60,
+    height: 50,
     width: 250,
     alignSelf: 'center',
-    backgroundColor: '#2196F3'
+    backgroundColor: '#088abd',
+    borderRadius: 8
   },
   submitButtonDisabled: {
     opacity: 0.2
   },
   buttonText: {
-    fontSize: 25,
+    fontSize: 22,
     fontWeight: 'bold',
     textAlign: 'center',
-    padding: 20,
     color: 'white'
   }
 })

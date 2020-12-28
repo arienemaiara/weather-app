@@ -72,20 +72,22 @@ class LanderScreen extends Component<LanderScreenProps, LanderScreenState> {
     })
   }
 
-  onItemPress = (city: City | undefined) => {
+  onItemPress = (cityName: string) => {
+    const city = this.props.citiesList.find((city) => city.name === cityName)
     if (city) {
       this.props.navigation.navigate('Forecast', { city })
     }
   }
 
-  onItemLongPress = (city: City | undefined) => {
+  onItemLongPress = (cityName: string) => {
+    const city = this.props.citiesList.find((city) => city.name === cityName)
+
     this.setState({
       alert: {
         ...this.state.alert,
         visible: true,
         message: 'Do you really want to remove this city?',
         onConfirmPress: () => {
-          console.log('onConfirmPress', city)
           if (city) {
             this.props.onCityRemoval(city)
             this.dismissAlert()
@@ -106,8 +108,7 @@ class LanderScreen extends Component<LanderScreenProps, LanderScreenState> {
   }
 
   render() {
-    const { citiesWeather, citiesList } = this.props
-    console.log(citiesWeather, citiesList)
+    const { citiesWeather } = this.props
 
     return (
       <>
@@ -116,12 +117,11 @@ class LanderScreen extends Component<LanderScreenProps, LanderScreenState> {
             data={citiesWeather}
             horizontal={FormFactor.isTV ? true : false}
             renderItem={({ item }) => {
-              const city = citiesList.find((city) => city.name === item.name)
               return (
                 <WeatherInfoCard
                   cityWeather={item}
-                  onItemPress={() => this.onItemPress(city)}
-                  onItemLongPress={() => this.onItemLongPress(city)}
+                  onItemPress={() => this.onItemPress(item.name)}
+                  onItemLongPress={() => this.onItemLongPress(item.name)}
                 />
               )
             }}

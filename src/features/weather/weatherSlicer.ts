@@ -146,8 +146,6 @@ export const loadApp = () => async (
   const { weather } = getState()
   const citiesWeather = await getCitiesWeather(weather.cities)
 
-  console.log('citiesWeather', citiesWeather)
-
   dispatch(loadCitiesWeather(citiesWeather))
 
   // else {
@@ -164,15 +162,17 @@ export const removeCity = (cityToBeRemoved: City) => async (
   dispatch: any,
   getState: () => ApplicationState
 ): Promise<void> => {
-  console.log('removeCity', cityToBeRemoved)
-  const { cities, geoLocation } = getState().weather
+  const { cities, citiesWeather, geoLocation } = getState().weather
   const newCities = cities.filter(
     (city: City) => city.id !== cityToBeRemoved.id
   )
   dispatch(loadCities(newCities))
 
-  const citiesWeather = await getCitiesWeather(newCities)
-  dispatch(loadCitiesWeather(citiesWeather))
+  const newCitiesWeather = citiesWeather.filter(
+    (city: CityWeather) => city.id !== cityToBeRemoved.id
+  )
+
+  dispatch(loadCitiesWeather(newCitiesWeather))
 
   await storeCitiesAndLocation(newCities, geoLocation!)
 }
@@ -194,14 +194,8 @@ export const addCity = (city: City) => async (
       name: newCityWeather.name
     }
   ]
+
   dispatch(loadCities(newCities))
-
-  // // const newCitiesWeather = await getCitiesWeather(newCities)
-  // // console.log('newCitiesWeather', newCitiesWeather)
-  // // dispatch(loadCitiesWeather(newCitiesWeather))
-
-  // console.log('newCities', newCities)
-  // dispatch(loadCities(newCities))
 
   await storeCitiesAndLocation(newCities, geoLocation!)
 }
