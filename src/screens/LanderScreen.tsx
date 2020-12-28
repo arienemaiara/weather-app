@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, FlatList, Text, StyleSheet, NativeModules } from 'react-native'
+import { View, FlatList, Text, StyleSheet } from 'react-native'
 import { FormFactor } from '@youi/react-native-youi'
 import { NavigationScreenProps } from 'react-navigation'
 import { connect } from 'react-redux'
@@ -10,15 +10,12 @@ import RefreshButton from '../components/RefreshButton'
 import AboutButton from '../components/AboutButton'
 import AboutModal from '../components/AboutModal'
 import AddCityButton from '../components/AddCityButton'
+import Alert, { AlertType } from '../components/Alert'
 
 import { City, CityWeather } from '../types/types'
 import { ApplicationState } from '../reducers'
 
-import {
-  refreshApp,
-  removeCity,
-  addCity
-} from '../features/weather/weatherSlicer'
+import { refreshApp, removeCity } from '../features/weather/weatherSlicer'
 
 type LanderScreenProps = {
   citiesList: City[]
@@ -27,11 +24,15 @@ type LanderScreenProps = {
   error?: string
   isLoading: boolean
   onCityRemoval: (city: City) => void
-  onAddCity: (city: City) => void
   reload: () => void
 } & NavigationScreenProps
 
-class LanderScreen extends Component<LanderScreenProps> {
+type LanderScreenState = {
+  modalAboutVisible: boolean
+  alert: AlertType
+}
+
+class LanderScreen extends Component<LanderScreenProps, LanderScreenState> {
   static navigationOptions = ({ navigation }: NavigationScreenProps) => {
     const { state } = navigation
 
@@ -40,7 +41,7 @@ class LanderScreen extends Component<LanderScreenProps> {
       return {
         headerRight: (
           <ButtonContainer>
-            <AddCityButton />
+            <AddCityButton onPress={() => navigation.navigate('AddLocation')} />
             <RefreshButton onPress={reload} disabled={isLoading} />
             <AboutButton onButtonPress={aboutButtonPress} />
           </ButtonContainer>
@@ -50,7 +51,16 @@ class LanderScreen extends Component<LanderScreenProps> {
   }
 
   state = {
-    modalAboutVisible: false
+    modalAboutVisible: false,
+    alert: {
+      visible: false,
+      title: 'Confirm',
+      message: '',
+      confirmButtonText: 'OK',
+      onConfirmPress: () => {},
+      cancelButtonText: 'Cancel',
+      onCancelPress: () => {}
+    }
   }
 
   componentDidMount() {
@@ -68,14 +78,36 @@ class LanderScreen extends Component<LanderScreenProps> {
     }
   }
 
+  onItemLongPress = (city: City | undefined) => {
+    this.setState({
+      alert: {
+        ...this.state.alert,
+        visible: true,
+        message: 'Do you really want to remove this city?',
+        onConfirmPress: () => {
+          console.log('onConfirmPress', city)
+          if (city) {
+            this.props.onCityRemoval(city)
+            this.dismissAlert()
+          }
+        },
+        onCancelPress: () => this.dismissAlert()
+      }
+    })
+  }
+
+  dismissAlert = () => {
+    this.setState({
+      alert: {
+        ...this.state.alert,
+        visible: false
+      }
+    })
+  }
+
   render() {
-    const {
-      citiesWeather,
-      citiesList,
-      lastRefreshed,
-      onCityRemoval,
-      onAddCity
-    } = this.props
+    const { citiesWeather, citiesList } = this.props
+    console.log(citiesWeather, citiesList)
 
     return (
       <>
@@ -87,12 +119,9 @@ class LanderScreen extends Component<LanderScreenProps> {
               const city = citiesList.find((city) => city.name === item.name)
               return (
                 <WeatherInfoCard
-                  id={item.id}
-                  city={item.name}
-                  weather={item.main.temp}
-                  weatherIcon={item.weather[0]?.icon}
-                  description={item.weather[0]?.main}
+                  cityWeather={item}
                   onItemPress={() => this.onItemPress(city)}
+                  onItemLongPress={() => this.onItemLongPress(city)}
                 />
               )
             }}
@@ -104,6 +133,7 @@ class LanderScreen extends Component<LanderScreenProps> {
           modalVisible={this.state.modalAboutVisible}
           hideModal={() => this.setState({ modalAboutVisible: false })}
         />
+        <Alert {...this.state.alert} />
       </>
     )
   }
@@ -132,8 +162,7 @@ const mapStateToProps = ({ weather }: ApplicationState) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
   reload: () => dispatch(refreshApp()),
-  onCityRemoval: (city: City) => dispatch(removeCity(city)),
-  onAddCity: (city: City) => dispatch(addCity(city))
+  onCityRemoval: (city: City) => dispatch(removeCity(city))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(LanderScreen)

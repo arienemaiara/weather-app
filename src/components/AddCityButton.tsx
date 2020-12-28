@@ -3,13 +3,17 @@ import { FormFactor } from '@youi/react-native-youi'
 
 import HeaderButton from './header/HeaderButton'
 
-export default class AddCityButton extends PureComponent {
+type AddCityButtonProps = {
+  onPress: () => void
+}
+
+export default class AddCityButton extends PureComponent<AddCityButtonProps> {
   render() {
     return (
       <HeaderButton
         title="Add City"
         icon="add"
-        onPress={() => {}}
+        onPress={this.props.onPress}
         iconStyle={{ fontSize: 16 }}
       />
     )

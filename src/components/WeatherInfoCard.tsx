@@ -2,35 +2,42 @@ import React from 'react'
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { FormFactor } from '@youi/react-native-youi'
 
-import { City } from '../types/types'
+import { City, CityWeather } from '../types/types'
 
 import WeatherIcon from './WeatherIcon'
 
 export type WeatherInfoCardProps = {
-  id: number
-  city: string
-  weather: number
-  weatherIcon: string
-  description: string
+  cityWeather: CityWeather
   onItemPress: (city: City) => void
+  onItemLongPress: (city: City) => void
 }
 
 export default function WeatherInfoCard({
-  city,
-  weather,
-  weatherIcon,
-  description,
-  onItemPress
+  cityWeather,
+  onItemPress,
+  onItemLongPress
 }: WeatherInfoCardProps) {
-  return (
-    <TouchableOpacity onPress={onItemPress}>
-      <View style={styles.cardContainer}>
-        <Text style={styles.cityName}>{city}</Text>
-        <View style={styles.weatherInfo}>
-          <WeatherIcon iconCode={weatherIcon} />
-          <Text style={styles.weather}>{weather}°C</Text>
+  if (cityWeather.error) {
+    return (
+      <TouchableOpacity onLongPress={onItemLongPress}>
+        <View style={[styles.cardContainer, styles.cardContainerError]}>
+          <Text style={{ color: '#fff' }}>{cityWeather.message}</Text>
         </View>
-        <Text style={styles.weatherDescription}>{description}</Text>
+      </TouchableOpacity>
+    )
+  }
+
+  return (
+    <TouchableOpacity onPress={onItemPress} onLongPress={onItemLongPress}>
+      <View style={styles.cardContainer}>
+        <Text style={styles.cityName}>{cityWeather.name}</Text>
+        <View style={styles.weatherInfo}>
+          <WeatherIcon iconCode={cityWeather.weather[0]?.icon} />
+          <Text style={styles.weather}>{cityWeather.main.temp}°C</Text>
+        </View>
+        <Text style={styles.weatherDescription}>
+          {cityWeather.weather[0]?.main}
+        </Text>
       </View>
     </TouchableOpacity>
   )
@@ -42,6 +49,7 @@ const styles = FormFactor.select({
       alignItems: 'center',
       justifyContent: 'space-between',
       width: 150,
+      height: 200,
       padding: 10,
       marginVertical: 10,
       marginHorizontal: 5,
@@ -49,6 +57,10 @@ const styles = FormFactor.select({
       borderWidth: 2,
       borderColor: '#ebedeb',
       borderRadius: 5
+    },
+    cardContainerError: {
+      backgroundColor: '#fa4d4d',
+      borderColor: '#c22a2a'
     },
     cityName: {
       color: '#070602',

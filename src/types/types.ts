@@ -5,7 +5,12 @@ export interface City {
   lon?: number | null
 }
 
-export interface CityWeather {
+export interface ErrorType {
+  error: boolean
+  message: string
+}
+
+export interface CityWeather extends ErrorType {
   coord: Coord
   weather: Weather[]
   base: string

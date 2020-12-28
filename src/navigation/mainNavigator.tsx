@@ -2,6 +2,7 @@ import { createStackNavigator, createSwitchNavigator } from 'react-navigation'
 
 import LanderScreen from '../screens/LanderScreen'
 import WeatherInfoScreen from '../screens/WeatherInfoScreen'
+import AddLocationScreen from '../screens/AddLocationScreen'
 import SplashScreen from '../screens/SplashScreen'
 
 import config from '../config'
@@ -12,7 +13,7 @@ const cardStyleOptions = {
   }
 }
 
-const AppStack = createStackNavigator(
+const MainStack = createStackNavigator(
   {
     Home: LanderScreen,
     Forecast: WeatherInfoScreen
@@ -31,6 +32,22 @@ const AppStack = createStackNavigator(
   }
 )
 
+const RootStack = createStackNavigator(
+  {
+    Main: {
+      screen: MainStack
+    },
+    AddLocation: {
+      screen: AddLocationScreen
+    }
+  },
+  {
+    mode: 'modal',
+    headerMode: 'none',
+    ...cardStyleOptions
+  }
+)
+
 const SplashStack = createStackNavigator(
   { Splash: SplashScreen },
   {
@@ -41,7 +58,7 @@ const SplashStack = createStackNavigator(
 
 const rootNavigationStack = createSwitchNavigator({
   Splash: SplashStack,
-  App: AppStack
+  App: RootStack
 })
 
 export default rootNavigationStack

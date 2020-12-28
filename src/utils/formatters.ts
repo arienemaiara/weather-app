@@ -1,7 +1,6 @@
 import moment from 'moment'
 
 export function formatDateToCalendar(datetime: string) {
-  console.log('formatDateToCalendar', datetime)
   return moment(datetime).calendar(null, {
     sameDay: '[Today]',
     nextDay: '[Tomorrow]',

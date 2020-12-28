@@ -5,7 +5,9 @@ import config from '../config'
 import * as constants from '../constants'
 
 const fetchWeatherData = async (type: string, city: City) => {
-  const locationQuery = city.name ? { q: city.name } : { lat: city.lat, lon: city.lon} 
+  const locationQuery = city.name
+    ? { q: city.name }
+    : { lat: city.lat, lon: city.lon }
   const urlQuery = queryString.stringify({
     ...locationQuery,
     units: config.DEFAULT_UNITS,
@@ -14,19 +16,29 @@ const fetchWeatherData = async (type: string, city: City) => {
   const url = `${config.OPEN_WEATHER_BASE_URL}${type}?${urlQuery}`
   console.log('fetching -> ', url)
 
-  const response = await fetch(url);
+  const response = await fetch(url)
   if (!response.ok) {
+    let message = ''
     if (response.status == 404) {
-      throw new Error(`No weather data found for ${city.name}`)
+      message = `No weather data found for ${city.name}`
     } else {
-      throw new Error(`Request failed [${response.status}]`)
+      message = `Request failed [${response.status}]`
+    }
+    return {
+      id: city.id,
+      name: city.name,
+      error: true,
+      message: message
     }
   }
-  return await response.json();
+  return await response.json()
 }
 
 export const fetchCurrentWeather = (city: City) => {
-  return fetchWeatherData(constants.OPEN_WEATHER_CURRENT_CONDITIONS_ENDPOINT, city)
+  return fetchWeatherData(
+    constants.OPEN_WEATHER_CURRENT_CONDITIONS_ENDPOINT,
+    city
+  )
 }
 
 export const fetchWeatherForecast = (city: City) => {
