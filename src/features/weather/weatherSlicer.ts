@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AsyncStorage, NativeModules } from 'react-native'
 
-import { City, CityWeather } from '../../types/types'
+import { City, CityWeather, Geolocation } from '../../types/types'
 import { DEFAULT_CITIES, ASYNC_STORAGE_KEYS } from '../../constants'
 import { ApplicationState } from '../../reducers'
 import { fetchCurrentWeather } from '../../services/openWeather'
@@ -12,8 +12,6 @@ export interface Location {
   coords: {
     lat: number
     lon: number
-    latitude: number
-    longitude: number
   }
 }
 
@@ -84,38 +82,25 @@ function storeCitiesAndLocation(cities: City[], position: Location) {
 }
 
 const findLocation = async (dispatch: any, cities: City[]) => {
-  console.log('findLocation')
   try {
-    dispatch(loading(true))
-    GeoLocation.get()
-      .then((location) => console.log('location', location))
-      .catch((error) => console.log(error.message))
-    // navigator.geolocation.getCurrentPosition(
-    //   async ({ coords }) => {
-    //     const geoLocation = { coords: { lat: coords.latitude, lon: coords.longitude, ...coords } }
+    const location = await GeoLocation.get()
+    const geoLocation = { coords: { lat: location.lat, lon: location.long } }
+    dispatch(loadLocation(geoLocation))
 
-    //     const firstCity = cities[0]
-    //     if (geoLocation.coords.lat !== firstCity.lat && geoLocation.coords.lon !== firstCity.lon) {
-    //       let currentCity = {
-    //         id: getMaxCityId(cities) + 1,
-    //         name: '',
-    //         lat: geoLocation.coords.lat,
-    //         lon: geoLocation.coords.lon
-    //       }
-    //       dispatch(loadCities([currentCity, ...cities]))
-    //     }
-    //     dispatch(loadLocation(geoLocation))
-    //     await storeCitiesAndLocation(cities, geoLocation!)
-    //     dispatch(loading(false))
-    //   },
-    //   (error: any) => {
-    //     console.log(error)
-    //     dispatch(loading(false))
-    //   },
-    //   { enableHighAccuracy: false, timeout: 20000, maximumAge: 60000 },
-    // )
+    const firstCity = cities[0]
+    if (location.lat !== firstCity.lat && location.long !== firstCity.lon) {
+      let currentCity = {
+        id: getMaxCityId(cities) + 1,
+        name: '',
+        lat: location.lat,
+        lon: location.long
+      }
+      dispatch(loadCities([currentCity, ...cities]))
+    }
+
+    await storeCitiesAndLocation(cities, geoLocation!)
   } catch (error) {
-    console.log(error)
+    console.log(error.message)
   }
 }
 
@@ -125,7 +110,6 @@ export const refreshApp = () => async (
 ) => {
   dispatch(loadApp())
   dispatch(updateRefresh())
-  // await findLocation(dispatch, getState().WeatherState.cities)
 }
 
 export const loadApp = () => async (
@@ -138,21 +122,18 @@ export const loadApp = () => async (
     ASYNC_STORAGE_KEYS.GEO_LOCATION
   ])
   const cities = stores![0][1]
-  const location = stores![1][1]
+
   if (cities !== null && cities !== undefined) {
     dispatch(loadCities(JSON.parse(cities)))
   }
-  if (location !== null && location !== undefined) {
-    dispatch(loadLocation(JSON.parse(location)))
-  }
-  const { weather } = getState()
-  const citiesWeather = await getCitiesWeather(weather.cities)
 
+  let { weather } = getState()
+
+  await findLocation(dispatch, weather.cities)
+
+  const citiesWeather = await getCitiesWeather(getState().weather.cities)
   dispatch(loadCitiesWeather(citiesWeather))
 
-  // else {
-  await findLocation(dispatch, weather.cities)
-  // }
   dispatch(loading(false))
 }
 
@@ -160,18 +141,20 @@ const getCitiesWeather = async (cities: City[]) => {
   return Promise.all(cities.map((city) => fetchCurrentWeather(city)))
 }
 
-export const removeCity = (cityToBeRemoved: City) => async (
-  dispatch: any,
-  getState: () => ApplicationState
-): Promise<void> => {
+export const removeCity = (
+  cityToBeRemoved: City,
+  cityWeather: CityWeather
+) => async (dispatch: any, getState: () => ApplicationState): Promise<void> => {
   const { cities, citiesWeather, geoLocation } = getState().weather
+
   const newCities = cities.filter(
     (city: City) => city.id !== cityToBeRemoved.id
   )
+
   dispatch(loadCities(newCities))
 
   const newCitiesWeather = citiesWeather.filter(
-    (city: CityWeather) => city.id !== cityToBeRemoved.id
+    (city: CityWeather) => city !== cityWeather
   )
 
   dispatch(loadCitiesWeather(newCitiesWeather))

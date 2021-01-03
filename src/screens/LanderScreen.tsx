@@ -23,7 +23,7 @@ type LanderScreenProps = {
   lastRefreshed: number
   error?: string
   isLoading: boolean
-  onCityRemoval: (city: City) => void
+  onCityRemoval: (city: City, cityWeather: CityWeather) => void
   reload: () => void
 } & NavigationScreenProps
 
@@ -72,15 +72,23 @@ class LanderScreen extends Component<LanderScreenProps, LanderScreenState> {
     })
   }
 
-  onItemPress = (cityName: string) => {
-    const city = this.props.citiesList.find((city) => city.name === cityName)
+  onItemPress = (cityWeather: CityWeather) => {
+    let city = {
+      name: cityWeather.name
+    }
+
     if (city) {
       this.props.navigation.navigate('Forecast', { city })
     }
   }
 
-  onItemLongPress = (cityName: string) => {
-    const city = this.props.citiesList.find((city) => city.name === cityName)
+  onItemLongPress = (cityWeather: CityWeather) => {
+    const city = this.props.citiesList.find(
+      (city) =>
+        city.name === cityWeather.name ||
+        (city.lat === cityWeather.coord.lat &&
+          city.lon === cityWeather.coord.lon)
+    )
 
     this.setState({
       alert: {
@@ -89,7 +97,7 @@ class LanderScreen extends Component<LanderScreenProps, LanderScreenState> {
         message: 'Do you really want to remove this city?',
         onConfirmPress: () => {
           if (city) {
-            this.props.onCityRemoval(city)
+            this.props.onCityRemoval(city, cityWeather)
             this.dismissAlert()
           }
         },
@@ -120,8 +128,8 @@ class LanderScreen extends Component<LanderScreenProps, LanderScreenState> {
               return (
                 <WeatherInfoCard
                   cityWeather={item}
-                  onItemPress={() => this.onItemPress(item.name)}
-                  onItemLongPress={() => this.onItemLongPress(item.name)}
+                  onItemPress={() => this.onItemPress(item)}
+                  onItemLongPress={() => this.onItemLongPress(item)}
                 />
               )
             }}
@@ -162,7 +170,8 @@ const mapStateToProps = ({ weather }: ApplicationState) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
   reload: () => dispatch(refreshApp()),
-  onCityRemoval: (city: City) => dispatch(removeCity(city))
+  onCityRemoval: (city: City, cityWeather: CityWeather) =>
+    dispatch(removeCity(city, cityWeather))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(LanderScreen)

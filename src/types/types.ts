@@ -1,3 +1,9 @@
+export interface Geolocation {
+  lat: number
+  long: number
+  alt: number
+}
+
 export interface City {
   id: number
   name: string

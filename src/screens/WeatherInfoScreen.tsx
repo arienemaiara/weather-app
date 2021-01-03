@@ -134,7 +134,7 @@ export default class WeatherInfoScreen extends Component<
         }
       }
     )
-    console.log('groupedForecast', groupedForecast)
+
     return groupedForecast
   }
 
