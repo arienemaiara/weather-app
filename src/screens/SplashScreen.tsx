@@ -1,15 +1,12 @@
 import React, { Component } from 'react'
-import { View, Image } from 'react-native'
+import { View, Image, StyleSheet } from 'react-native'
 import { NavigationScreenProps } from 'react-navigation'
+import { FormFactor } from "@youi/react-native-youi";
 import { connect } from 'react-redux'
 
 import { City, CityWeather } from '../types/types'
 import { ApplicationState } from '../reducers'
-import {
-  loadApp,
-  refreshApp,
-  removeCity
-} from '../features/weather/weatherSlicer'
+import { loadApp } from '../features/weather/weatherSlicer'
 
 type SplashScreenProps = {
   citiesList: City[]
@@ -32,15 +29,27 @@ class SplashScreen extends Component<SplashScreenProps> {
 
   render() {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={styles.container}>
         <Image
-          style={{ width: 300, height: 300 }}
+          style={styles.image}
           source={{ uri: 'res://drawable/weather/sun.png' }}
         />
       </View>
     )
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center'
+  },
+  image: {
+    width: FormFactor.isTV ? 300 : 150,
+    height: FormFactor.isTV ? 300 : 150,
+  }
+})
 
 const mapStateToProps = ({ weather }: ApplicationState) => ({
   error: weather.error,

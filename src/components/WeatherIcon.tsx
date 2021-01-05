@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { View, Image, StyleSheet } from 'react-native'
+import { Image, StyleSheet } from 'react-native'
 import { FormFactor } from '@youi/react-native-youi'
 
 import { weatherImages } from '../constants/weatherIcons'
@@ -21,12 +21,10 @@ export default class WeatherIcon extends PureComponent<WeatherIconProps> {
   }
 }
 
-const styles = FormFactor.select({
-  TV: StyleSheet.create({
-    weatherPicture: {
-      width: 80,
-      height: 80,
-      marginHorizontal: 5
-    }
-  })
+const styles = StyleSheet.create({
+  weatherPicture: {
+    width: FormFactor.isTV ? 80 : 30,
+    height: FormFactor.isTV ? 80 : 30,
+    marginHorizontal: 5
+  }
 })

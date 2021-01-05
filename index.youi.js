@@ -1,9 +1,6 @@
-/**
- * Basic You.i RN app
- */
 import React, { Component } from "react";
-import { AppRegistry, Image, StyleSheet, Text, View } from "react-native";
-import { FormFactor, FontRegistry } from "@youi/react-native-youi";
+import { AppRegistry } from "react-native";
+import { FontRegistry } from "@youi/react-native-youi";
 import { Provider } from 'react-redux';
 
 import { store } from './src/store' 

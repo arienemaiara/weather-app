@@ -5,6 +5,7 @@ import {
   StyleProp,
   TextStyle
 } from 'react-native'
+import { FormFactor } from '@youi/react-native-youi'
 
 import FontIcon, { IconsType } from '../FontIcon'
 
@@ -39,12 +40,12 @@ const styles = StyleSheet.create({
   buttonContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: 5,
+    marginHorizontal: FormFactor.isTV ? 5 : 2,
     backgroundColor: '#fff',
     borderWidth: 2,
     borderColor: '#056991',
-    width: 30,
-    height: 30,
+    width:  FormFactor.isTV ? 30 : 25,
+    height: FormFactor.isTV ? 30 : 25,
     borderRadius: 15
   },
   buttonDisabled: {

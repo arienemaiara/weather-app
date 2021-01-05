@@ -11,7 +11,7 @@ import {
   NavigationScreenProps,
   NavigationEventSubscription
 } from 'react-navigation'
-import { FocusManager } from '@youi/react-native-youi'
+import { FocusManager, FormFactor } from '@youi/react-native-youi'
 import { connect } from 'react-redux'
 
 import { addCity } from '../features/weather/weatherSlicer'
@@ -115,20 +115,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff'
   },
   title: {
-    fontSize: 25,
+    fontSize: FormFactor.isTV ? 25 : 16,
     color: '#444',
     textAlign: 'center',
-    margin: 20
+    margin: FormFactor.isTV ? 20 : 10
   },
   input: {
-    height: 40,
+    height: FormFactor.isTV ? 40 : 20,
     padding: 10,
     marginVertical: 10,
-    marginHorizontal: 20,
+    marginHorizontal: FormFactor.isTV ? 20 : 0,
     borderColor: '#aaa',
     borderWidth: 2,
     borderRadius: 3,
-    fontSize: 18
+    fontSize: FormFactor.isTV ? 18 : 14
   },
   closeButton: {
     padding: 10
@@ -137,8 +137,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 30,
-    height: 50,
-    width: 250,
+    height: FormFactor.isTV ? 50 : 25,
+    width: FormFactor.isTV ? 250 : 100,
     alignSelf: 'center',
     backgroundColor: '#088abd',
     borderRadius: 8
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     opacity: 0.2
   },
   buttonText: {
-    fontSize: 22,
+    fontSize: FormFactor.isTV ? 22 : 12,
     fontWeight: 'bold',
     textAlign: 'center',
     color: 'white'

@@ -51,7 +51,7 @@ export default class WeatherInfoScreen extends Component<
         headerRight: (
           <ButtonContainer>
             <RefreshButton onPress={reload} disabled={loading} />
-            <AboutButton onButtonPress={aboutButtonPress} />
+            {FormFactor.isTV && <AboutButton onButtonPress={aboutButtonPress} />}
           </ButtonContainer>
         )
       }
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   cityName: {
-    fontSize: 20,
+    fontSize: FormFactor.isTV ? 20 : 15,
     color: '#2e2e2e',
     margin: 10
   }

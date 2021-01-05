@@ -41,9 +41,9 @@ class LanderScreen extends Component<LanderScreenProps, LanderScreenState> {
       return {
         headerRight: (
           <ButtonContainer>
-            <AddCityButton onPress={() => navigation.navigate('AddLocation')} />
+            {FormFactor.isTV && <AddCityButton onPress={() => navigation.navigate('AddLocation')} />}
             <RefreshButton onPress={reload} disabled={isLoading} />
-            <AboutButton onButtonPress={aboutButtonPress} />
+            {FormFactor.isTV && <AboutButton onButtonPress={aboutButtonPress} />}
           </ButtonContainer>
         )
       }
@@ -67,10 +67,11 @@ class LanderScreen extends Component<LanderScreenProps, LanderScreenState> {
     this.props.navigation.setParams({
       reload: this.props.reload,
       isLoading: this.props.isLoading,
-      aboutButtonPress: () =>
-        this.setState({ modalAboutVisible: !this.state.modalAboutVisible })
+      aboutButtonPress: () => this.aboutButtonPress()
     })
   }
+
+  aboutButtonPress = () => this.setState({ modalAboutVisible: !this.state.modalAboutVisible })
 
   onItemPress = (cityWeather: CityWeather) => {
     let city = {
@@ -121,7 +122,7 @@ class LanderScreen extends Component<LanderScreenProps, LanderScreenState> {
     return (
       <>
         <View style={styles.mainContainer}>
-          <FlatList
+           <FlatList
             data={citiesWeather}
             horizontal={FormFactor.isTV ? true : false}
             renderItem={({ item }) => {
@@ -136,6 +137,12 @@ class LanderScreen extends Component<LanderScreenProps, LanderScreenState> {
             keyExtractor={(item) => item.id!.toString()}
             style={styles.weatherList}
           />
+          {FormFactor.isHandset && 
+            <View style={styles.buttonsContainer}>
+              <AddCityButton onPress={() => this.props.navigation.navigate('AddLocation')} />
+              <AboutButton onButtonPress={this.aboutButtonPress} />
+            </View>
+          }
         </View>
         <AboutModal
           modalVisible={this.state.modalAboutVisible}
@@ -147,18 +154,24 @@ class LanderScreen extends Component<LanderScreenProps, LanderScreenState> {
   }
 }
 
-const styles = FormFactor.select({
-  TV: StyleSheet.create({
-    mainContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#fcfefe'
-    },
-    weatherList: {
-      alignSelf: 'center'
-    }
-  })
+const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fcfefe'
+  },
+  weatherList: {
+    alignSelf: 'center'
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    width: '100%',
+  }
 })
 
 const mapStateToProps = ({ weather }: ApplicationState) => ({

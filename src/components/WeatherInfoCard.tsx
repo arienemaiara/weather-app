@@ -34,10 +34,10 @@ export default function WeatherInfoCard({
         <View style={styles.weatherInfo}>
           <WeatherIcon iconCode={cityWeather.weather[0]?.icon} />
           <Text style={styles.weather}>{cityWeather.main.temp}°C</Text>
+          <Text style={styles.weatherDescription}>
+            {cityWeather.weather[0]?.main}
+          </Text>
         </View>
-        <Text style={styles.weatherDescription}>
-          {cityWeather.weather[0]?.main}
-        </Text>
       </View>
     </TouchableOpacity>
   )
@@ -79,6 +79,43 @@ const styles = FormFactor.select({
     weatherDescription: {
       color: '#2e2e2e',
       fontSize: 12
+    }
+  }),
+  Handset: StyleSheet.create({
+    cardContainer: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      justifyContent: 'space-around',
+      width: '100%',
+      paddingHorizontal: 15,
+      paddingVertical: 10,
+      marginTop: 5,
+      backgroundColor: '#f8f8f8',
+      borderWidth: 2,
+      borderColor: '#ebedeb',
+    },
+    cardContainerError: {
+      backgroundColor: '#fa4d4d',
+      borderColor: '#c22a2a'
+    },
+    cityName: {
+      alignSelf: 'center',
+      color: '#070602',
+      fontSize: 12,
+      marginBottom: 5,
+    },
+    weatherInfo: {
+      flexDirection: 'column',
+      alignItems: 'center'
+    },
+    weather: {
+      color: '#2e2e2e',
+      fontSize: 12,
+      marginBottom: 5
+    },
+    weatherDescription: {
+      color: '#2e2e2e',
+      fontSize: 11
     }
   })
 })

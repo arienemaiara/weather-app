@@ -129,7 +129,7 @@ export const loadApp = () => async (
 
   let { weather } = getState()
 
-  await findLocation(dispatch, weather.cities)
+  // await findLocation(dispatch, weather.cities)
 
   const citiesWeather = await getCitiesWeather(getState().weather.cities)
   dispatch(loadCitiesWeather(citiesWeather))

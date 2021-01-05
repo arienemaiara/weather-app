@@ -1,9 +1,11 @@
 import { createStackNavigator, createSwitchNavigator } from 'react-navigation'
+import { FormFactor } from '@youi/react-native-youi'
 
 import LanderScreen from '../screens/LanderScreen'
 import WeatherInfoScreen from '../screens/WeatherInfoScreen'
 import AddLocationScreen from '../screens/AddLocationScreen'
 import SplashScreen from '../screens/SplashScreen'
+
 
 import config from '../config'
 
@@ -24,9 +26,14 @@ const MainStack = createStackNavigator(
       headerTitle: config.APP_TITLE,
       headerBackTitle: null,
       headerStyle: {
-        backgroundColor: '#088abd'
+        backgroundColor: '#088abd',
+        height: 40
       },
-      headerTintColor: '#fff'
+      headerTintColor: '#fff',
+      headerTitleStyle: {
+        width: 200,
+        fontSize: FormFactor.isTV ? 30 : 14
+      }
     },
     ...cardStyleOptions
   }
@@ -52,7 +59,8 @@ const SplashStack = createStackNavigator(
   { Splash: SplashScreen },
   {
     initialRouteName: 'Splash',
-    ...cardStyleOptions
+    ...cardStyleOptions,
+    headerMode: 'none'
   }
 )
 
